@@ -129,7 +129,7 @@ fn criterion_benchmark(c: &mut Criterion) {
                 c.bench_function(&format!("{}({}, {})", stringify!($binop), stringify!($lhs), stringify!($rhs)), |bencher| {
                     ($lhs.iter().zip($rhs.iter())).for_each(|($a, $b)| {
                         if $check {
-                            bencher.iter_batched(|| ($a.clone(), $b.clone()), |(a, b)| {
+                            bencher.iter_batched(|| ($a.clone(), $b), |(a, b): (_, &_)| {
                                 $binop(a, b)
                             }, BatchSize::SmallInput);
                         }
