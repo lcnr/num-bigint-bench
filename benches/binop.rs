@@ -135,7 +135,7 @@ fn criterion_benchmark(c: &mut Criterion) {
                         }
                     })
                 });
-
+            /* TODO
                 c.bench_function(&format!("{}(&{}, {})", stringify!($binop), stringify!($lhs), stringify!($rhs)), |bencher| {
                     ($lhs.iter().zip($rhs.iter())).for_each(|($a, $b)| {
                         if $check {
@@ -164,34 +164,7 @@ fn criterion_benchmark(c: &mut Criterion) {
                             }, BatchSize::SmallInput);
                         }
                     })
-                });
-            }
-        }
-    }
-
-    macro_rules! bench_binop_assign {
-        ($binop:path, $lhs:expr, $rhs:expr) => {
-            bench_binop_assign!($binop, $lhs, $rhs, a, b, true);
-        };
-        ($binop:path, $lhs:expr, $rhs:expr, $a:ident, $b:ident, $check:expr) => {
-            // prevent empty benchmarks from running/causing a panic in bench_function
-            if $lhs.iter().zip($rhs.iter()).any(|($a, $b)| {
-                // suppress unused variable warning without setting `allow(unused_variables)` for the whole functions
-                let _ = (&$a, &$b);
-                $check
-            }) {
-                c.bench_function(&format!("{}(&mut {}, {})", stringify!($binop), stringify!($lhs), stringify!($rhs)), |bencher| {
-                    ($lhs.iter().zip($rhs.iter())).for_each(|($a, $b)| {
-                        if $check {
-                            bencher.iter_batched(|| ($a.clone(), $b.clone()), |(mut a, b)| {
-                                $binop(&mut a, b)
-                            }, BatchSize::SmallInput);
-                        }
-                    })
-                });
-                
-                // TODO: remove if BinopAssign<&X> does not get added or uncomment in case it does
-                // bench_binop!($binop, &mut $lhs, &$rhs);
+                }); */
             }
         }
     }
@@ -200,50 +173,45 @@ fn criterion_benchmark(c: &mut Criterion) {
     macro_rules! bench_all_binop {
         ($lhs:expr, $rhs:expr) => {
             bench_binop!(Add::add, $lhs, $rhs);
-            bench_binop_assign!(AddAssign::add_assign, $lhs, $rhs);
+            //bench_binop_assign!(AddAssign::add_assign, $lhs, $rhs);
 
             bench_binop!(Sub::sub, $lhs, $rhs, a, b, a >= &(*b).into());
-            bench_binop_assign!(SubAssign::sub_assign, $lhs, $rhs, a, b, a >= &(*b).into());
+            //bench_binop_assign!(SubAssign::sub_assign, $lhs, $rhs, a, b, a >= &(*b).into());
 
             bench_binop!(Mul::mul, $lhs, $rhs);
-            bench_binop_assign!(MulAssign::mul_assign, $lhs, $rhs);
+            //bench_binop_assign!(MulAssign::mul_assign, $lhs, $rhs);
 
             bench_binop!(Div::div, $lhs, $rhs, a, b, !b.is_zero());
-            bench_binop_assign!(DivAssign::div_assign, $lhs, $rhs);
+            //bench_binop_assign!(DivAssign::div_assign, $lhs, $rhs);
 
             bench_binop!(Rem::rem, $lhs, $rhs);
-            bench_binop_assign!(RemAssign::rem_assign, $lhs, $rhs);
+            //bench_binop_assign!(RemAssign::rem_assign, $lhs, $rhs);
         }
     }
-    /* bench_all_binop!(BIGUINT_TINY, U8);
+    
+    bench_all_binop!(BIGUINT_TINY, U8);
     bench_all_binop!(BIGUINT_SMALL, U8);
     bench_all_binop!(BIGUINT_MEDIUM, U8);
-    bench_all_binop!(BIGUINT_LARGE, U8);
-    bench_all_binop!(BIGUINT_ENORMOUS, U8);
+
 
     bench_all_binop!(BIGUINT_TINY, U16);
     bench_all_binop!(BIGUINT_SMALL, U16);
     bench_all_binop!(BIGUINT_MEDIUM, U16);
-    bench_all_binop!(BIGUINT_LARGE, U16);
-    bench_all_binop!(BIGUINT_ENORMOUS, U16);
+
 
     bench_all_binop!(BIGUINT_TINY, U32);
     bench_all_binop!(BIGUINT_SMALL, U32);
     bench_all_binop!(BIGUINT_MEDIUM, U32);
-    bench_all_binop!(BIGUINT_LARGE, U32);
-    bench_all_binop!(BIGUINT_ENORMOUS, U32);
 
     bench_all_binop!(BIGUINT_TINY, U64);
     bench_all_binop!(BIGUINT_SMALL, U64);
     bench_all_binop!(BIGUINT_MEDIUM, U64);
-    bench_all_binop!(BIGUINT_LARGE, U64);
-    bench_all_binop!(BIGUINT_ENORMOUS, U64);*/
+
 
     bench_all_binop!(BIGUINT_TINY, U128);
     bench_all_binop!(BIGUINT_SMALL, U128);
     bench_all_binop!(BIGUINT_MEDIUM, U128);
-    // bench_all_binop!(BIGUINT_LARGE, U128);
-    // bench_all_binop!(BIGUINT_ENORMOUS, U128);
+
 }
 
 criterion_group!(benches, criterion_benchmark);
