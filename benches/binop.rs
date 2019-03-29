@@ -242,8 +242,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     bench_all_binop!(BIGUINT_TINY, U128);
     bench_all_binop!(BIGUINT_SMALL, U128);
     bench_all_binop!(BIGUINT_MEDIUM, U128);
-    bench_all_binop!(BIGUINT_LARGE, U128);
-    bench_all_binop!(BIGUINT_ENORMOUS, U128);
+    // bench_all_binop!(BIGUINT_LARGE, U128);
+    // bench_all_binop!(BIGUINT_ENORMOUS, U128);
 }
 
 criterion_group!(benches, criterion_benchmark);
